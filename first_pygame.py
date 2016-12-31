@@ -2,20 +2,19 @@
 # @Author: Haut-Stone
 # @Date:   2016-12-30 13:24:14
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2016-12-31 09:17:16
+# @Last Modified time: 2016-12-31 12:37:25
 
 import  random , pygame, sys
 from pygame.locals import *
 
 FPS = 30#帧率
-
 WINDOWWIDHT = 700#画布宽
 WINDOWHEJGHT = 700#画布高
-REVERALSPEED = 8#揭开的速度
+REVERALSPEED = 8#		？？
 BOXSIZE = 40#盒子大小
 GAPSIZE = 10#间距大小
-BOARDWIDTH = 5#板子行个数
-BOARDHEIGHT = 4#板子列个数
+BOARDWIDTH = 10#板子行个数
+BOARDHEIGHT = 7#板子列个数
 assert (BOARDWIDTH*BOARDHEIGHT) % 2 == 0, 'Sorry we need an even number of boxes'
 
 XMARGIN = int((WINDOWWIDHT - (BOARDWIDTH * (BOXSIZE + GAPSIZE))) / 2)#左右间距
@@ -57,7 +56,6 @@ def main():
 
 	mousex = 0#初始化鼠标位置
 	mousey = 0
-	test = None
 	firstSection = None #初始化没有第一次点击
 	pygame.display.set_caption('Emojy Memory Game')#标题
 	#以上为初始化定义
@@ -65,11 +63,12 @@ def main():
 	mainBoard = getRandomizedBoard()#创建所有可能的图形的基础单位的表
 	revealedBoxes = generateRevealedBoxesData(False)#刚开始均盖住->返回的是表示状态的一个列表
 	DISPLAYSURF.fill(BGCOLOR)
-	# startGameAnimation(mainBoard)#开场动画
+	startGameAnimation(mainBoard)#开场动画
+
 	while True:#一次刷新循环
 		mouseClicked = False #鼠标刚开始没有按下
-		DISPLAYSURF.fill(BGCOLOR)#加载背景
-		drawBoard(mainBoard, revealedBoxes)#加载板子
+		DISPLAYSURF.fill(BGCOLOR)
+		drawBoard(mainBoard, revealedBoxes)#更新画布
 
 		for event in pygame.event.get():#查找事件
 
@@ -86,49 +85,47 @@ def main():
 		if boxx != None and boxy != None:
 
 			if not revealedBoxes[boxx][boxy]:#如果没有被反转
-				drawHighlightBox(boxx, boxy)#加载提示框
+				drawHighlightBox(boxx, boxy)
 
 			if not revealedBoxes[boxx][boxy] and mouseClicked:
-				# revealBoxesAnimation(mainBoard, [(boxx, boxy)])#揭开的动画
-				revealedBoxes[boxx][boxy]  = True #标记已揭开
+				revealBoxesAnimation(mainBoard, [(boxx, boxy)])
+				revealedBoxes[boxx][boxy]  = True
+
 				if firstSection == None:
-					firstSection = (boxx, boxy)#标记是不是第一个块
+					firstSection = (boxx, boxy)#函数
 				else:
-					#分别得到两块的颜色和形状
 					icon1Shape, icon1Color = getShapeAndColor(mainBoard, firstSection[0], firstSection[1])
 					icon2Shape, icon2Color = getShapeAndColor(mainBoard, boxx, boxy)
 
-					if icon1Shape != icon2Shape or icon1Color != icon2Color:#如果不一样
-						# for wait in [1,2,3,4,5,6,7,8,9]:
-						drawBoard(mainBoard, revealedBoxes)
-						
-						pygame.display.flip()#更新画面
-						FPSCLOCK.tick(FPS)
-						# 	if revealedBoxes[firstSection[0]][firstSection[1]] == True:
-						# 		revealedBoxes[firstSection[0]][firstSection[1]] = False
-							# 	else:
-						# 		revealedBoxes[firstSection[0]][firstSection[1]] = True
-						# 		print('运行到这里了')
-						print('测试部分已经结束')
-						# coverBoxesAnimation(mainBoard, [(firstSection[0], firstSection[1]), (boxx, boxy)])#合上两个方块
-						revealedBoxes[firstSection[0]][firstSection[1]] = False #标记没有被揭开
-						revealedBoxes[boxx][boxy] = False #标记没有被揭开
-					elif hasWon(revealedBoxes):#如果赢了
-						# gameWonAnimation(mainBoard)
+					if icon1Shape != icon2Shape or icon1Color != icon2Color:
+						pygame.time.wait(1000)
+						coverBoxesAnimation(mainBoard, [(firstSection[0], firstSection[1]), (boxx, boxy)])
+						revealedBoxes[firstSection[0]][firstSection[1]] = False
+						revealedBoxes[boxx][boxy] = False
+					elif hasWon(revealedBoxes):
+						gameWonAnimation(mainBoard)
+						pygame.time.wait(2000)
 
 						#重置板子
 						mainBoard = getRandomizedBoard()
-
 						revealedBoxes = generateRevealedBoxesData(False)
 
 						#展示新板子
 						drawBoard(mainBoard, revealedBoxes)
+						for event in pygame.event.get():
+							if event.type == QUIT:
+								pygame.quit()
+								sys.exit()
 						pygame.display.update()
+						pygame.time.wait(1000)
 
-						# startGameAnimation(mainBoard)
+						startGameAnimation(mainBoard)
 					firstSection = None
-
-		pygame.display.update()#更新背景，板子，提示框
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				pygame.quit()
+				sys.exit()
+		pygame.display.update()
 		FPSCLOCK.tick(FPS)
 
 def generateRevealedBoxesData(val):#盖子是否打开的布尔列表
@@ -136,7 +133,6 @@ def generateRevealedBoxesData(val):#盖子是否打开的布尔列表
 	for i in range(BOARDWIDTH):
 		revealedBoxes.append([val] * BOARDHEIGHT)
 	return revealedBoxes
-
 def getRandomizedBoard():#返回板子元素列表
 	icons = []
 	for color in ALLCOLORS:
@@ -156,87 +152,24 @@ def getRandomizedBoard():#返回板子元素列表
 			column.append(icons[0])
 			del icons[0]
 		board.append(column)
-	return board #返回到mainboard	
-
+	return board #返回到mainboard		
 def splitIntoGroupsOf(groupSize, theList):#制造列表的列表，，，不懂		？？
 	result = []
 	for i in range(0, len(theList), groupSize):
 		result.append(theList[i:i + groupSize])
 	return result
-def leftTopCoorsOfBox(boxx, boxy):#求出元素左上角的坐标，为了绘制长方形
+def leftTopCoorsOfBox(boxx, boxy):#制造不同的坐标系
 	left = boxx * (BOXSIZE + GAPSIZE) + XMARGIN
 	top = boxy * (BOXSIZE + GAPSIZE) + YMARGIN
 	return (left, top)
-
-def getBoxAtPixel(x, y):#建造覆盖块，如果鼠标位置被覆盖，则返回对应的块的坐标
-	for boxx in range(BOARDWIDTH):#遍历所有元素位置
-		for boxy in range(BOARDHEIGHT):
-			left, top = leftTopCoorsOfBox(boxx, boxy)
-			boxRect = pygame.Rect(left, top, BOXSIZE, BOXSIZE)#建造一个覆盖块
-			if boxRect.collidepoint(x, y):#如果压住，则返回对应的元素位置
-				return (boxx, boxy)
-	return (None, None)#如果没有
-
-def getShapeAndColor(board, boxx, boxy):#得到元素的形状颜色
-
-	return board[boxx][boxy][0], board[boxx][boxy][1]
-# def revealBoxesAnimation(board, boxesToReveal):#打开板子的动画
-# 	for coverage in range(BOXSIZE, (-REVERALSPEED) - 1, -REVERALSPEED):
-# 		drawBoxCovers(board, boxesToReveal, coverage)
-# def coverBoxesAnimation(board, boxesToCover):#盖上板子的动画
-#  	for coverage in range(0, BOXSIZE + REVERALSPEED, REVERALSPEED):
-#  		drawBoxCovers(board, boxesToCover, coverage)
-# def startGameAnimation(board):#开始的提示动画
-# 	coveredBoxes = generateRevealedBoxesData(False)#刚开始均盖住
-# 	boxes = []#新建元素表单
-# 	for x in range(BOARDWIDTH):
-# 		for y in range(BOARDHEIGHT):
-# 			boxes.append((x, y))
-# 	random. shuffle(boxes)#打乱元素
-# 	boxGroups = splitIntoGroupsOf(8, boxes)#		？？
-
-# 	drawBoard(board, coveredBoxes)
-# 	for boxGroup in boxGroups:
-# 		revealBoxesAnimation(board, boxGroup)#翻开动画
-# 		pygame.time.wait(100)
-# 		coverBoxesAnimation(board, boxGroup)#合上动画
-#def gameWonAnimation(board):#获胜动画
-# 	coveredBoxes = generateRevealedBoxesData(True) #创建状态列表
-# 	color1 = LIGHTBGCOLOR
-# 	color2 = BGCOLOR
-
-# 	for i in range(13):
-# 		color1, color2 = color2, color1
-# 		DISPLAYSURF.fill(color1) #快速改变背景颜色
-# 		drawBoard(board, coveredBoxes)#重画板子
-# 		pygame.display.update()#更新画面
-# 		pygame.time.wait(300)
-def drawBoard(board, revealed):#绘制board
+def getBoxAtPixel(x, y):#貌似是建造覆盖块，经过加工将鼠标的位置转换为对应方块的位置
 	for boxx in range(BOARDWIDTH):
 		for boxy in range(BOARDHEIGHT):
 			left, top = leftTopCoorsOfBox(boxx, boxy)
-			pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, BOXSIZE, BOXSIZE))#画背景颜色，覆盖之前
-			if not revealed[boxx][boxy]:
-				pygame.draw.rect(DISPLAYSURF, BOXCOLOR, (left, top, BOXSIZE, BOXSIZE))
-			else:
-				shape, color = getShapeAndColor(board, boxx, boxy)
-				drawIcon(shape, color, boxx, boxy)
-
-def drawHighlightBox(boxx, boxy):#绘制高亮框
-	left , top = leftTopCoorsOfBox(boxx, boxy)
-	pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR, (left-5, top-5, BOXSIZE+10, BOXSIZE+10), 4)
-
-def drawBoxCovers(board, boxes, coverage):#绘制覆盖的板子
-	for box in boxes:
-		left, top = leftTopCoorsOfBox(box[0], box[1])
-		pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, BOXSIZE, BOXSIZE))#画背景颜色，覆盖之前
-		shape, color  = getShapeAndColor(board, box[0], box[1])
-		drawIcon(shape, color, box[0], box[1])#画图形
-		if coverage > 0:
-			pygame.draw.rect(DISPLAYSURF, BOXCOLOR, (left, top, coverage, BOXSIZE))#有盖子则画盖子
-	pygame.display.update()
-	FPSCLOCK.tick(FPS)
-
+			boxRect = pygame.Rect(left, top, BOXSIZE, BOXSIZE)#建造一个覆盖块
+			if boxRect.collidepoint(x, y):
+				return (boxx, boxy)
+	return (None, None)
 def drawIcon(shape, color, boxx, boxy):#画出板子元素所对应的图形
     quarter = int(BOXSIZE * 0.25) # syntactic sugar
     half =    int(BOXSIZE * 0.5)  # syntactic sugar
@@ -256,7 +189,70 @@ def drawIcon(shape, color, boxx, boxy):#画出板子元素所对应的图形
             pygame.draw.line(DISPLAYSURF, color, (left + i, top + BOXSIZE - 1), (left + BOXSIZE - 1, top + i))
     elif shape == OVAL:
         pygame.draw.ellipse(DISPLAYSURF, color, (left, top + quarter, BOXSIZE, half))
-        
+def getShapeAndColor(board, boxx, boxy):#得到元素的形状颜色
+
+	return board[boxx][boxy][0], board[boxx][boxy][1]
+def drawBoxCovers(board, boxes, coverage):#绘制覆盖的板子
+	for box in boxes:
+		left, top = leftTopCoorsOfBox(box[0], box[1])
+		pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, BOXSIZE, BOXSIZE))
+		shape, color  = getShapeAndColor(board, box[0], box[1])
+		drawIcon(shape, color, box[0], box[1])
+		if coverage > 0:
+			pygame.draw.rect(DISPLAYSURF, BOXCOLOR, (left, top, coverage, BOXSIZE))
+			print(coverage)
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				pygame.quit()
+				sys.exit()
+	pygame.display.update()
+	FPSCLOCK.tick(FPS)
+def revealBoxesAnimation(board, boxesToReveal):#打开板子的动画
+	for coverage in range(BOXSIZE,(-REVERALSPEED) - 1, -REVERALSPEED):
+		drawBoxCovers(board, boxesToReveal, coverage)
+def coverBoxesAnimation(board, boxesToCover):#盖上板子的动画
+	for coverage in range(0, BOXSIZE + REVERALSPEED, REVERALSPEED):
+		drawBoxCovers(board, boxesToCover, coverage)
+def drawBoard(board, revealed):#绘制board
+	for boxx in range(BOARDWIDTH):
+		for boxy in range(BOARDHEIGHT):
+			left, top = leftTopCoorsOfBox(boxx, boxy)
+			if not revealed[boxx][boxy]:
+				pygame.draw.rect(DISPLAYSURF, BOXCOLOR, (left, top, BOXSIZE, BOXSIZE))
+			else:
+				shape, color = getShapeAndColor(board, boxx, boxy)
+				drawIcon(shape, color, boxx, boxy)
+def drawHighlightBox(boxx, boxy):#绘制高亮框
+	left , top = leftTopCoorsOfBox(boxx, boxy)
+	pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR, (left-5, top-5, BOXSIZE+10, BOXSIZE+10), 4)
+def startGameAnimation(board):#开始的提示动画
+	coveredBoxes = generateRevealedBoxesData(False)#刚开始均盖住
+	boxes = []#新建元素表单
+	for x in range(BOARDWIDTH):
+		for y in range(BOARDHEIGHT):
+			boxes.append((x, y))
+	random. shuffle(boxes)#打乱元素
+	boxGroups = splitIntoGroupsOf(8, boxes)#		？？
+
+	drawBoard(board, coveredBoxes)
+	for boxGroup in boxGroups:
+		revealBoxesAnimation(board, boxGroup)#翻开动画
+		coverBoxesAnimation(board, boxGroup)#合上动画
+def gameWonAnimation(board):#获胜动画
+	coveredBoxes = generateRevealedBoxesData(True) #创建状态列表
+	color1 = LIGHTBGCOLOR
+	color2 = BGCOLOR
+
+	for i in range(13):
+		color1, color2 = color2, color1
+		DISPLAYSURF.fill(color1) #快速改变背景颜色
+		drawBoard(board, coveredBoxes)#重画板子
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				pygame.quit()
+				sys.exit()
+		pygame.display.update()#更新画面
+		pygame.time.wait(300)
 def hasWon(revealedBoxes):#如果全部都翻开了，就赢了
 	for i in revealedBoxes:
 		if False in i:
