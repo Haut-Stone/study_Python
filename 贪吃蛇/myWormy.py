@@ -2,13 +2,13 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-01 19:07:00
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-01 21:05:54
+# @Last Modified time: 2017-01-01 21:55:34
 import random, pygame, sys
 from pygame.locals import *
 
 Fps = 15
-WindowHeight = 600
-WindowWeight = 600
+WindowHeight = 800
+WindowWeight = 800
 CellSize = 20
 assert WindowHeight % CellSize == 0, '亲，要给一个合适的长宽'
 assert WindowWeight % CellSize == 0, '亲，要给一个合适的长宽'
@@ -35,12 +35,14 @@ Right = 'right'
 Head = 0
 
 def main():
-	global FpsClock, DisplaySurf, BasicFont
+	global FpsClock, DisplaySurf, BasicFont, SoundObj1, SoundObj2
 	pygame.init()
 	FpsClock = pygame.time.Clock()
 	DisplaySurf = pygame.display.set_mode((WindowWeight, WindowHeight), 0, 32)
 	BasicFont = pygame.font.Font('freesansbold.ttf', 18)
 	pygame.display.set_caption('你好贪吃蛇')
+	SoundObj1 = pygame.mixer.Sound('myPython.wav')
+	SoundObj2 = pygame.mixer.Sound('badswap.wav')
 
 	#--^--各种初始化
 	#
@@ -53,6 +55,8 @@ def main():
 		showGameOverScreen()
 
 def runGame():
+	fps = 10
+	lastLen = -1
 	startX = random.randint(5, CellEverRom - 6)#加载初始位置
 	startY = random.randint(5, CellEverColumn - 6)
 	pythonBody = [{'x':startX, 'y':startY}, {'x':startX-1, 'y':startY}, {'x':startX-2, 'y':startY}]
@@ -83,11 +87,14 @@ def runGame():
 					terminate()
 
 		if pythonBody[Head]['x'] == -1 or pythonBody[Head]['x'] == CellEverRom or pythonBody[Head]['y'] == -1 or pythonBody[Head]['y'] == CellEverColumn:
+			SoundObj2.play()
 			return
 		for perBody in pythonBody[1:]:
 			if perBody['x'] == pythonBody[Head]['x'] and perBody['y'] == pythonBody[Head]['y']:
+				SoundObj2.play
 				return
 		if pythonBody[Head]['x'] == apple['x'] and pythonBody[Head]['y'] == apple['y']:
+			SoundObj1.play()
 			apple = getRandomLocation()
 		else:
 			del pythonBody[-1]
@@ -112,8 +119,12 @@ def runGame():
 		drawApple(apple)
 		drawPython(pythonBody)
 		drawScore(len(pythonBody) - 3)
+		if len(pythonBody)-3 > lastLen:
+			lastLen = len(pythonBody)-3
+			fps += 0.5#							加速
+			print('现在的速度是-->' ,fps)
 		pygame.display.update()
-		FpsClock.tick(Fps)
+		FpsClock.tick(fps)
 
 		#--^--更新画面
 		#
@@ -186,7 +197,7 @@ def showGameOverScreen():
 	DisplaySurf.blit(overSurf, overRect)
 	drawPressKeyMsg()
 	pygame.display.update()
-	pygame.time.wait(500)
+	FpsClock.tick(Fps)
 	checkForKeyPress()
 
 	while True:
