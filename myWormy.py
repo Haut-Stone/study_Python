@@ -2,16 +2,16 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-01 19:07:00
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-01 20:38:50
+# @Last Modified time: 2017-01-01 21:05:54
 import random, pygame, sys
 from pygame.locals import *
 
-Fps = 30
+Fps = 15
 WindowHeight = 600
 WindowWeight = 600
 CellSize = 20
-assert WindowHeight % CellSize == 0 '亲，要给一个合适的长宽'
-assert WindowWeight % CellSize == 0 '亲，要给一个合适的长宽'
+assert WindowHeight % CellSize == 0, '亲，要给一个合适的长宽'
+assert WindowWeight % CellSize == 0, '亲，要给一个合适的长宽'
 CellEverRom = WindowWeight / CellSize
 CellEverColumn = WindowHeight / CellSize
 
@@ -22,6 +22,7 @@ Green = (0, 255, 0)
 Blue = (0, 0, 255)
 DarkGray = (40, 40, 40)
 DarkGreen = (0, 155, 0)
+DarkRed = (155, 0, 0)
 
 BgColor= Black
 LineColor = White
@@ -78,7 +79,7 @@ def runGame():
 					direction = Down
 				elif(event.key == K_UP or event.key == K_w) and direction != Down:
 					direction = Up
-				else event.key == K_ESCAPE:
+				elif event.key == K_ESCAPE:
 					terminate()
 
 		if pythonBody[Head]['x'] == -1 or pythonBody[Head]['x'] == CellEverRom or pythonBody[Head]['y'] == -1 or pythonBody[Head]['y'] == CellEverColumn:
@@ -108,7 +109,7 @@ def runGame():
 		pythonBody.insert(0, newHead)
 		DisplaySurf.fill(BgColor)
 		drawLine()
-		drawApple()
+		drawApple(apple)
 		drawPython(pythonBody)
 		drawScore(len(pythonBody) - 3)
 		pygame.display.update()
@@ -170,7 +171,7 @@ def terminate():
 	sys.exit()
 
 def getRandomLocation():
-	return {'x':random.randint(0,CellEverRom - 1), 'y':random.randint(0, CellEverColumn - 1)}
+	return {'x':random.randint(0,CellEverRom - 2), 'y':random.randint(0, CellEverColumn - 2)}
 
 def showGameOverScreen():
 	gameOverFont = pygame.font.Font('freesansbold.ttf', 150)
@@ -178,9 +179,52 @@ def showGameOverScreen():
 	overSurf = gameOverFont.render('Over', True, White)
 	gameRect = gameSurf.get_rect()
 	overRect = overSurf.get_rect()
-	gameRect.mintop = (WindowWeight/2, 10)
-	overRect.mintop = (WindowWeight/2, gameRect.height + 10 + 25)
+	gameRect.midtop = (WindowWeight/2, 10)
+	overRect.midtop = (WindowWeight/2, gameRect.height + 10 + 25)
 	
+	DisplaySurf.blit(gameSurf, gameRect)
+	DisplaySurf.blit(overSurf, overRect)
+	drawPressKeyMsg()
+	pygame.display.update()
+	pygame.time.wait(500)
+	checkForKeyPress()
 
+	while True:
+		if checkForKeyPress():
+			pygame.event.get()
+			return
+
+def drawScore(score):
+	scoreSurf = BasicFont.render('Score %s' % (score), True, White)
+	scoreRect = scoreSurf.get_rect()
+	scoreRect.topleft = (WindowWeight - 120, 10)
+	DisplaySurf.blit(scoreSurf, scoreRect)
+
+
+def drawPython(pythonBody):
+	for perBody in pythonBody:
+		x = perBody['x'] * CellSize
+		y = perBody['y'] * CellSize
+		pythonSegmentRect = pygame.Rect(x, y, CellSize, CellSize)
+		pygame.draw.rect(DisplaySurf, DarkGreen, pythonSegmentRect)
+		pythonInnerSegmentRect = pygame.Rect(x+4, y+4, CellSize-8, CellSize-8)
+		pygame.draw.rect(DisplaySurf, Green, pythonInnerSegmentRect)
+
+def drawApple(apple):
+	x = apple['x'] * CellSize
+	y = apple['y'] * CellSize
+	appleRect = pygame.Rect(x, y, CellSize, CellSize)
+	pygame.draw.rect(DisplaySurf, Red, appleRect)
+	appleInnerRect = pygame.Rect(x+4,y+4, CellSize-8, CellSize-8)
+	pygame.draw.rect(DisplaySurf, DarkRed, appleInnerRect)
+
+def drawLine():
+	for x in range(0, WindowWeight, CellSize):
+		pygame.draw.line(DisplaySurf, DarkGray, (x, 0), (x, WindowHeight))
+	for y in range(0, WindowHeight, CellSize):
+		pygame.draw.line(DisplaySurf, DarkGray, (0,y), (WindowWeight, y))
+
+if __name__ == '__main__':
+	main()
 
 
