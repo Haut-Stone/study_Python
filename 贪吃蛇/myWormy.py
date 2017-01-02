@@ -2,7 +2,7 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-01 19:07:00
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-01 21:55:34
+# @Last Modified time: 2017-01-02 13:31:35
 import random, pygame, sys
 from pygame.locals import *
 
@@ -41,7 +41,7 @@ def main():
 	DisplaySurf = pygame.display.set_mode((WindowWeight, WindowHeight), 0, 32)
 	BasicFont = pygame.font.Font('freesansbold.ttf', 18)
 	pygame.display.set_caption('你好贪吃蛇')
-	SoundObj1 = pygame.mixer.Sound('myPython.wav')
+	SoundObj1 = pygame.mixer.Sound('myWormy.wav')
 	SoundObj2 = pygame.mixer.Sound('badswap.wav')
 
 	#--^--各种初始化
