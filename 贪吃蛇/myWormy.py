@@ -2,7 +2,7 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-01 19:07:00
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-03 00:04:24
+# @Last Modified time: 2017-01-03 09:50:32
 import random, pygame, sys
 from pygame.locals import *
 
@@ -200,7 +200,7 @@ def showGameOverScreen():#展示游戏结束的画面
 	DisplaySurf.blit(overSurf, overRect)
 	drawPressKeyMsg()
 	pygame.display.update()
-	FpsClock.tick(Fps)
+	pygame.time.wait(500)
 	checkForKeyPress()
 
 	while True:
