@@ -2,20 +2,21 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-01 19:07:00
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-02 13:31:35
+# @Last Modified time: 2017-01-03 00:04:24
 import random, pygame, sys
 from pygame.locals import *
 
-Fps = 15
-WindowHeight = 800
+Fps = 15#图像刷新率
+WindowHeight = 800#屏幕宽高
 WindowWeight = 800
-CellSize = 20
+CellSize = 20#各自大小
+
 assert WindowHeight % CellSize == 0, '亲，要给一个合适的长宽'
 assert WindowWeight % CellSize == 0, '亲，要给一个合适的长宽'
-CellEverRom = WindowWeight / CellSize
+CellEverRom = WindowWeight / CellSize#每行的单位格子数
 CellEverColumn = WindowHeight / CellSize
 
-White = (255, 255, 255)
+White = (255, 255, 255)#定义颜色
 Black = (0, 0, 0)
 Red = (255, 0, 0)
 Green = (0, 255, 0)
@@ -24,18 +25,20 @@ DarkGray = (40, 40, 40)
 DarkGreen = (0, 155, 0)
 DarkRed = (155, 0, 0)
 
-BgColor= Black
+BgColor= Black#颜色的语法糖
 LineColor = White
 
-Up = 'up'
+Up = 'up'#方向的语法糖
 Down = 'down'
 Left = 'left'
 Right = 'right'
 
-Head = 0
+Head = 0#头部的语法糖
 
 def main():
+
 	global FpsClock, DisplaySurf, BasicFont, SoundObj1, SoundObj2
+
 	pygame.init()
 	FpsClock = pygame.time.Clock()
 	DisplaySurf = pygame.display.set_mode((WindowWeight, WindowHeight), 0, 32)
@@ -55,11 +58,11 @@ def main():
 		showGameOverScreen()
 
 def runGame():
-	fps = 10
+	speed = 10
 	lastLen = -1
 	startX = random.randint(5, CellEverRom - 6)#加载初始位置
 	startY = random.randint(5, CellEverColumn - 6)
-	pythonBody = [{'x':startX, 'y':startY}, {'x':startX-1, 'y':startY}, {'x':startX-2, 'y':startY}]
+	pythonBody = [{'x':startX, 'y':startY}, {'x':startX-1, 'y':startY}, {'x':startX-2, 'y':startY}]#初始身体段
 	direction = Right
 	apple = getRandomLocation()
 
@@ -70,7 +73,7 @@ def runGame():
 
 
 	while True:
-		for event in pygame.event.get():
+		for event in pygame.event.get():#侦测键盘
 			if event.type == QUIT:
 				pygame.quit()
 				sys.exit()
@@ -91,7 +94,7 @@ def runGame():
 			return
 		for perBody in pythonBody[1:]:
 			if perBody['x'] == pythonBody[Head]['x'] and perBody['y'] == pythonBody[Head]['y']:
-				SoundObj2.play
+				SoundObj2.play()
 				return
 		if pythonBody[Head]['x'] == apple['x'] and pythonBody[Head]['y'] == apple['y']:
 			SoundObj1.play()
@@ -121,22 +124,22 @@ def runGame():
 		drawScore(len(pythonBody) - 3)
 		if len(pythonBody)-3 > lastLen:
 			lastLen = len(pythonBody)-3
-			fps += 0.5#							加速
-			print('现在的速度是-->' ,fps)
+			speed += 0.5#							加速，0.5让加速不是很快，通过这里可以调节难度
+			print('现在的速度是-->' ,speed)
 		pygame.display.update()
-		FpsClock.tick(fps)
+		FpsClock.tick(speed)
 
 		#--^--更新画面
 		#
 		#--_--函数定义
 
-def drawPressKeyMsg():
+def drawPressKeyMsg():#绘制提示文本
 	pressKeySurf = BasicFont.render('Press any key to start', True, DarkGray)
 	pressKeyRect = pressKeySurf.get_rect()
 	pressKeyRect.topleft = (WindowWeight-200, WindowHeight - 30)
 	DisplaySurf.blit(pressKeySurf, pressKeyRect)
 
-def checkForKeyPress():
+def checkForKeyPress():#检查是否按下按键
 	if len(pygame.event.get(QUIT)) > 0:
 		terminate()
 
@@ -147,12 +150,12 @@ def checkForKeyPress():
 		terminate()
 	return keyUpEvents[0].key
 
-def showStartScreen():
+def showStartScreen():#开始动画
 	titleFont = pygame.font.Font('freesansbold.ttf', 100)
 	titleSurf1 = titleFont.render('Wormy', True, White, DarkGreen)
 	titleSurf2 = titleFont.render('Wormy', True, Green)
 
-	degree1 = 0
+	degree1 = 0#图片的初始角度
 	degree2 = 0
 
 	while True:
@@ -177,14 +180,14 @@ def showStartScreen():
 		degree1 += 3
 		degree2 += 7
 
-def terminate():
+def terminate():#语法糖
 	pygame.quit()
 	sys.exit()
 
-def getRandomLocation():
+def getRandomLocation():#取得苹果的位置
 	return {'x':random.randint(0,CellEverRom - 2), 'y':random.randint(0, CellEverColumn - 2)}
 
-def showGameOverScreen():
+def showGameOverScreen():#展示游戏结束的画面
 	gameOverFont = pygame.font.Font('freesansbold.ttf', 150)
 	gameSurf = gameOverFont.render('Game', True, White)
 	overSurf = gameOverFont.render('Over', True, White)
@@ -205,14 +208,14 @@ def showGameOverScreen():
 			pygame.event.get()
 			return
 
-def drawScore(score):
-	scoreSurf = BasicFont.render('Score %s' % (score), True, White)
+def drawScore(score):#画出分数
+	scoreSurf = BasicFont.render('Score %s' % (score), True, White)#字体对象
 	scoreRect = scoreSurf.get_rect()
 	scoreRect.topleft = (WindowWeight - 120, 10)
 	DisplaySurf.blit(scoreSurf, scoreRect)
 
 
-def drawPython(pythonBody):
+def drawPython(pythonBody):#画出蛇的身体
 	for perBody in pythonBody:
 		x = perBody['x'] * CellSize
 		y = perBody['y'] * CellSize
@@ -221,7 +224,7 @@ def drawPython(pythonBody):
 		pythonInnerSegmentRect = pygame.Rect(x+4, y+4, CellSize-8, CellSize-8)
 		pygame.draw.rect(DisplaySurf, Green, pythonInnerSegmentRect)
 
-def drawApple(apple):
+def drawApple(apple):#画出苹果
 	x = apple['x'] * CellSize
 	y = apple['y'] * CellSize
 	appleRect = pygame.Rect(x, y, CellSize, CellSize)
@@ -229,11 +232,12 @@ def drawApple(apple):
 	appleInnerRect = pygame.Rect(x+4,y+4, CellSize-8, CellSize-8)
 	pygame.draw.rect(DisplaySurf, DarkRed, appleInnerRect)
 
-def drawLine():
+def drawLine():#画出提示线
 	for x in range(0, WindowWeight, CellSize):
 		pygame.draw.line(DisplaySurf, DarkGray, (x, 0), (x, WindowHeight))
 	for y in range(0, WindowHeight, CellSize):
 		pygame.draw.line(DisplaySurf, DarkGray, (0,y), (WindowWeight, y))
+	
 
 if __name__ == '__main__':
 	main()
