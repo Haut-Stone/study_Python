@@ -2,7 +2,7 @@
 # @Author: Haut-Stone
 # @Date:   2016-12-27 23:37:13
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-03 22:22:06
+# @Last Modified time: 2017-01-04 11:47:49
 # 
 # 这个程序是方块的碰撞，小小的测试
 import pygame, sys
@@ -10,11 +10,12 @@ from pygame.locals import *
 
 Fps = 30
 White = (255, 255, 255)
-AlphaBlack = (0, 0, 0, 0)
 Red = (255, 0, 0)
 Green = (0, 255, 0)
 Blue = (0, 0 ,255)
+AlphaBlack = (0, 0, 0, 0)
 AlphaWhite = (255, 255, 255, 12)#最后一个参数是透明度
+AlphaBlue = (0, 0 ,255 ,132)
 
 DisplayWidth = 400
 DisplayHeight = 400
@@ -60,7 +61,6 @@ def main():
 def drawEveryThing(sampRect):
 	DISPLAYSURF.fill(AlphaBlack)
 	pygame.draw.rect(DISPLAYSURF, AlphaWhite, sampRect)
-
 def showInof(sampRect):
 	print('左边的坐标：',sampRect.left, '右边的坐标：', sampRect.right)
 	print('顶部的坐标：',sampRect.top, '底部的坐标：', sampRect.bottom)
