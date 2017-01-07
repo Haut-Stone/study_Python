@@ -2,7 +2,7 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-06 13:00:54
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-07 15:23:05
+# @Last Modified time: 2017-01-07 17:44:21
 
 import pygame, sys
 from pygame.locals import *
@@ -175,8 +175,9 @@ def gameOver():
 		pygame.display.update()
 		FpsClock.tick(Fps)
 
-# def drawBlocks():
-
+def drawBlocks():
+	blocks = []
+	
 def drawTotalLife():
 	LifeFont = pygame.font.Font('freesansbold.ttf', 20)
 	textSurface = LifeFont.render('life:', True, White, Black)
