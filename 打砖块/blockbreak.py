@@ -2,7 +2,7 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-06 13:00:54
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-06 15:24:51
+# @Last Modified time: 2017-01-07 15:23:05
 
 import pygame, sys
 from pygame.locals import *
@@ -33,13 +33,13 @@ GameState_Exit = 5
 
 #小球常量定义
 BallStart_Y = (DisplayHeight // 2)
-BallSize = 4
+BallSize = 6
 
 #板子常量定义
-PaddleStart_X = (DisplayHeight/2 - 100)
-PaddleStart_Y = (DisplayWidth - 100)
+PaddleStart_X = (DisplayWidth//2 - 100)
+PaddleStart_Y = (DisplayHeight - 100)
 PaddleWidth = 100
-PaddleHight = 30
+PaddleHight = 20
 
 #砖块常量定义
 RowNumber = 4
@@ -49,8 +49,6 @@ BlockHigth = 20
 BlockColor = Red
 
 assert (DisplayWidth % BlockWidth == 0), '请给一个合适的方块宽度'
-
-
 
 def main():
 	#初始化
@@ -114,10 +112,28 @@ def gameStartscreen():
 
 def runGame():
 	nowX = PaddleStart_X
+	ballX = PaddleStart_X
+	ballY = BallStart_Y
+	ChangeX = -3
+	ChangeY = -4
 
 	while True:
-		DisplaySurf.fill(Black)
+		#球的速度
+		ballX += ChangeX
+		ballY += ChangeY
 
+		#小球的矩形框
+		sampRect = pygame.Rect(ballX, ballY, BallSize, BallSize)
+
+		#碰撞检测
+		if sampRect.bottom > DisplayHeight:
+			return 
+		if sampRect.top < 0 or (PaddleStart_Y <= sampRect.bottom <= PaddleStart_Y+20 and nowX < sampRect.centerx < nowX + PaddleWidth):
+			ChangeY = -ChangeY
+		elif sampRect.left < 0 or sampRect.right > DisplayWidth:
+			ChangeX = -ChangeX
+
+		#事件监测
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				terminal()
@@ -128,12 +144,18 @@ def runGame():
 				else:
 					nowX = mouseX
 
+		#绘图			
+		DisplaySurf.fill(Black)
+		drawTotalLife()
 		drawPaddle(nowX)
+		drawBall(ballX, ballY)
+		#按键动作检查
 		if checkKeyPress():
 			pygame.event.get()
 			return
 		pygame.display.update()
 		FpsClock.tick(Fps)
+
 def gameOver():
 	#建立文字
 	fontObj2 = pygame.font.Font('freesansbold.ttf', 64)
@@ -155,9 +177,15 @@ def gameOver():
 
 # def drawBlocks():
 
+def drawTotalLife():
+	LifeFont = pygame.font.Font('freesansbold.ttf', 20)
+	textSurface = LifeFont.render('life:', True, White, Black)
+	textRect = textSurface.get_rect()
+	textRect.center = (DisplayWidth-80,30)
+	DisplaySurf.blit(textSurface, textRect)
 
-# def drawBall():
-
+def drawBall(ballX, ballY):
+	pygame.draw.circle(DisplaySurf, Blue, (ballX, ballY), BallSize, 0)
 
 def drawPaddle(x):
 	paddle = pygame.Rect(x, PaddleStart_Y, PaddleWidth, PaddleHight)
