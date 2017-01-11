@@ -2,7 +2,7 @@
 # @Author: Haut-Stone
 # @Date:   2016-12-30 13:24:14
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-05 20:17:36
+# @Last Modified time: 2017-01-10 11:19:48
 
 import  random , pygame, sys
 from pygame.locals import *
@@ -13,8 +13,8 @@ WINDOWHEJGHT = 700#画布高
 REVERALSPEED = 8#		？？
 BOXSIZE = 40#盒子大小
 GAPSIZE = 10#间距大小
-BOARDWIDTH = 10#板子行个数
-BOARDHEIGHT = 7#板子列个数
+BOARDWIDTH = 4#板子行个数
+BOARDHEIGHT = 4#板子列个数
 assert (BOARDWIDTH*BOARDHEIGHT) % 2 == 0, 'Sorry we need an even number of boxes'
 
 XMARGIN = int((WINDOWWIDHT - (BOARDWIDTH * (BOXSIZE + GAPSIZE))) / 2)#左右间距

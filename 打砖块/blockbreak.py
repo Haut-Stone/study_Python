@@ -2,7 +2,7 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-06 13:00:54
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-07 17:44:21
+# @Last Modified time: 2017-01-11 23:37:08
 
 import pygame, sys
 from pygame.locals import *
@@ -43,10 +43,13 @@ PaddleHight = 20
 
 #砖块常量定义
 RowNumber = 4
-ColumnNumber = 8
-BlockWidth = 20
+ColumnNumber = 9
+BlockGap = 10
+BlockWidth = 50
 BlockHigth = 20
-BlockColor = Red
+BlockOriginX = (DisplayWidth - (BlockWidth+BlockGap)*ColumnNumber)//2
+BlockOriginY = 60
+BlockColor = SpaceGray
 
 assert (DisplayWidth % BlockWidth == 0), '请给一个合适的方块宽度'
 
@@ -111,11 +114,13 @@ def gameStartscreen():
 		FpsClock.tick(Fps)
 
 def runGame():
+
 	nowX = PaddleStart_X
 	ballX = PaddleStart_X
 	ballY = BallStart_Y
 	ChangeX = -3
 	ChangeY = -4
+	blocks = initBlocks();
 
 	while True:
 		#球的速度
@@ -126,6 +131,23 @@ def runGame():
 		sampRect = pygame.Rect(ballX, ballY, BallSize, BallSize)
 
 		#碰撞检测
+		
+		curX = BlockOriginX
+		curY = BlockOriginY
+		for row in range(RowNumber):
+			curX = BlockOriginX
+			for col in range(ColumnNumber):
+				tempRect = pygame.Rect(curX, curY, BlockWidth, BlockHigth)
+				if blocks[row][col] == 1:
+					#从下面撞
+					print(sampRect.top,'-',tempRect.bottom)
+					if sampRect.top < tempRect.bottom and tempRect.right > sampRect.centerx > tempRect.left:
+						blocks[row][col] = 0
+						ChangeY = -ChangeY
+						continue
+				curX += BlockWidth + BlockGap
+			curY += BlockHigth + BlockGap
+
 		if sampRect.bottom > DisplayHeight:
 			return 
 		if sampRect.top < 0 or (PaddleStart_Y <= sampRect.bottom <= PaddleStart_Y+20 and nowX < sampRect.centerx < nowX + PaddleWidth):
@@ -147,6 +169,7 @@ def runGame():
 		#绘图			
 		DisplaySurf.fill(Black)
 		drawTotalLife()
+		drawBlocks(blocks)
 		drawPaddle(nowX)
 		drawBall(ballX, ballY)
 		#按键动作检查
@@ -175,9 +198,25 @@ def gameOver():
 		pygame.display.update()
 		FpsClock.tick(Fps)
 
-def drawBlocks():
+#初始化砖块状态
+def initBlocks():
 	blocks = []
-	
+	for row in range(RowNumber):
+		blocks.append([1]*ColumnNumber)
+	return blocks;
+#画出砖块
+def drawBlocks(blocks):
+	curX = BlockOriginX
+	curY = BlockOriginY
+	for row in range(RowNumber):
+		curX = BlockOriginX
+		for col in range(ColumnNumber):
+			# print(curX,'-',curY,' row:',row,'col:',col,'状态',blocks[row][col])
+			if (blocks[row][col] == 1):
+				pygame.draw.rect(DisplaySurf, BlockColor, (curX, curY, BlockWidth, BlockHigth))
+			curX += BlockWidth + BlockGap
+		curY += BlockHigth + BlockGap
+#画出总生命
 def drawTotalLife():
 	LifeFont = pygame.font.Font('freesansbold.ttf', 20)
 	textSurface = LifeFont.render('life:', True, White, Black)
@@ -185,9 +224,11 @@ def drawTotalLife():
 	textRect.center = (DisplayWidth-80,30)
 	DisplaySurf.blit(textSurface, textRect)
 
+#画出球
 def drawBall(ballX, ballY):
 	pygame.draw.circle(DisplaySurf, Blue, (ballX, ballY), BallSize, 0)
 
+#画出挡板
 def drawPaddle(x):
 	paddle = pygame.Rect(x, PaddleStart_Y, PaddleWidth, PaddleHight)
 	pygame.draw.rect(DisplaySurf, Red, paddle)
