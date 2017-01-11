@@ -2,9 +2,9 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-06 13:00:54
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-11 23:37:08
+# @Last Modified time: 2017-01-12 00:29:34
 
-import pygame, sys
+import pygame, sys, random
 from pygame.locals import *
 
 Fps = 60
@@ -23,16 +23,9 @@ Blue = (0, 0, 255)
 SpaceGray = (96, 96, 96)
 
 
-#游戏状态常量定义
-GameState_Init = 0
-GameState_Start = 1
-GameState_Run = 2
-GameState_Over = 3
-GameState_ShutDown = 4
-GameState_Exit = 5
 
 #小球常量定义
-BallStart_Y = (DisplayHeight // 2)
+BallStart_Y = (DisplayHeight // 2 + 50)
 BallSize = 6
 
 #板子常量定义
@@ -44,7 +37,7 @@ PaddleHight = 20
 #砖块常量定义
 RowNumber = 4
 ColumnNumber = 9
-BlockGap = 10
+BlockGap = 2
 BlockWidth = 50
 BlockHigth = 20
 BlockOriginX = (DisplayWidth - (BlockWidth+BlockGap)*ColumnNumber)//2
@@ -116,7 +109,7 @@ def gameStartscreen():
 def runGame():
 
 	nowX = PaddleStart_X
-	ballX = PaddleStart_X
+	ballX = random.randint(100, 500)
 	ballY = BallStart_Y
 	ChangeX = -3
 	ChangeY = -4
@@ -124,30 +117,42 @@ def runGame():
 
 	while True:
 		#球的速度
+		
 		ballX += ChangeX
 		ballY += ChangeY
 
 		#小球的矩形框
 		sampRect = pygame.Rect(ballX, ballY, BallSize, BallSize)
 
-		#碰撞检测
+		#砖块碰撞检测-----bug重灾区23333
 		
 		curX = BlockOriginX
 		curY = BlockOriginY
+		flag = 0
 		for row in range(RowNumber):
 			curX = BlockOriginX
 			for col in range(ColumnNumber):
 				tempRect = pygame.Rect(curX, curY, BlockWidth, BlockHigth)
 				if blocks[row][col] == 1:
 					#从下面撞
-					print(sampRect.top,'-',tempRect.bottom)
-					if sampRect.top < tempRect.bottom and tempRect.right > sampRect.centerx > tempRect.left:
+					print('球的顶部高度=',sampRect.top,'-','砖块的底部高度=',tempRect.bottom)
+					if sampRect.top < tempRect.bottom and tempRect.left < sampRect.centerx < tempRect.right:
 						blocks[row][col] = 0
 						ChangeY = -ChangeY
-						continue
+						flag = 1
+						break
+					#从上面撞
+					if sampRect.bottom < tempRect.top and tempRect.left < sampRect.centerx < tempRect.right:
+						blocks[row][col] = 0
+						ChangeY = -ChangeY
+						flag = 1
+						break
 				curX += BlockWidth + BlockGap
+			if flag == 1:
+				break	
 			curY += BlockHigth + BlockGap
 
+		#边界碰撞检测
 		if sampRect.bottom > DisplayHeight:
 			return 
 		if sampRect.top < 0 or (PaddleStart_Y <= sampRect.bottom <= PaddleStart_Y+20 and nowX < sampRect.centerx < nowX + PaddleWidth):
