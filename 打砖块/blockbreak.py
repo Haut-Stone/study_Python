@@ -2,7 +2,7 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-06 13:00:54
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-12 00:29:34
+# @Last Modified time: 2017-01-12 00:45:12
 
 import pygame, sys, random
 from pygame.locals import *
@@ -156,6 +156,12 @@ def runGame():
 		if sampRect.bottom > DisplayHeight:
 			return 
 		if sampRect.top < 0 or (PaddleStart_Y <= sampRect.bottom <= PaddleStart_Y+20 and nowX < sampRect.centerx < nowX + PaddleWidth):
+			if sampRect.centerx > nowX + (PaddleWidth)/2:
+				if ChangeX < 0:
+					ChangeX = -ChangeX
+			elif sampRect.centerx < nowX + (PaddleWidth)/2:
+				if ChangeX > 0:
+					ChangeX = -ChangeX
 			ChangeY = -ChangeY
 		elif sampRect.left < 0 or sampRect.right > DisplayWidth:
 			ChangeX = -ChangeX
