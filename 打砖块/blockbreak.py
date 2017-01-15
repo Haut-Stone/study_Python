@@ -2,7 +2,7 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-06 13:00:54
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-12 00:45:12
+# @Last Modified time: 2017-01-15 23:16:01
 
 import pygame, sys, random
 from pygame.locals import *
@@ -21,7 +21,6 @@ Red = (255, 0, 0)
 Green = (0, 255, 0)
 Blue = (0, 0, 255)
 SpaceGray = (96, 96, 96)
-
 
 
 #小球常量定义
