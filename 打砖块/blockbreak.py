@@ -2,11 +2,12 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-06 13:00:54
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-15 23:16:01
+# @Last Modified time: 2017-01-16 22:51:52
 
 import pygame, sys, random
 from pygame.locals import *
 
+#刷新速度
 Fps = 60
 TotalLife = 5
 
@@ -155,12 +156,22 @@ def runGame():
 		if sampRect.bottom > DisplayHeight:
 			return 
 		if sampRect.top < 0 or (PaddleStart_Y <= sampRect.bottom <= PaddleStart_Y+20 and nowX < sampRect.centerx < nowX + PaddleWidth):
-			if sampRect.centerx > nowX + (PaddleWidth)/2:
+			if sampRect.centerx > nowX + ((PaddleWidth)/4)*3:
 				if ChangeX < 0:
 					ChangeX = -ChangeX
-			elif sampRect.centerx < nowX + (PaddleWidth)/2:
+			elif sampRect.centerx < nowX + (PaddleWidth)/4:
 				if ChangeX > 0:
 					ChangeX = -ChangeX
+			elif PaddleWidth/4 + nowX < sampRect.centerx < nowX + PaddleWidth/2:
+				if ChangeX > 0:
+					ChangeX = (-ChangeX)-1
+				else:
+					ChangeX = ChangeX+1
+			elif (PaddleWidth/4)*3 + nowX < sampRect.centerx < nowX + PaddleWidth:
+				if ChangeX < 0:
+					ChangeX = (-ChangeX)+1
+				else:
+					ChangeX = ChangeX-1
 			ChangeY = -ChangeY
 		elif sampRect.left < 0 or sampRect.right > DisplayWidth:
 			ChangeX = -ChangeX
@@ -214,6 +225,7 @@ def initBlocks():
 	for row in range(RowNumber):
 		blocks.append([1]*ColumnNumber)
 	return blocks;
+
 #画出砖块
 def drawBlocks(blocks):
 	curX = BlockOriginX
@@ -226,6 +238,7 @@ def drawBlocks(blocks):
 				pygame.draw.rect(DisplaySurf, BlockColor, (curX, curY, BlockWidth, BlockHigth))
 			curX += BlockWidth + BlockGap
 		curY += BlockHigth + BlockGap
+
 #画出总生命
 def drawTotalLife():
 	LifeFont = pygame.font.Font('freesansbold.ttf', 20)
