@@ -2,7 +2,7 @@
 # @Author: Haut-Stone
 # @Date:   2017-01-01 19:07:00
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-03 17:31:13
+# @Last Modified time: 2017-06-08 19:59:47
 import random, pygame, sys
 from pygame.locals import *
 
@@ -15,7 +15,6 @@ assert WindowHeight % CellSize == 0, '亲，要给一个合适的长宽'
 assert WindowWeight % CellSize == 0, '亲，要给一个合适的长宽'
 CellEverRom = WindowWeight / CellSize#每行的单位格子数
 CellEverColumn = WindowHeight / CellSize
-
 White = (255, 255, 255)#定义颜色
 Black = (0, 0, 0)
 Red = (255, 0, 0)
