@@ -1,32 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Haut-Stone
-# @Date:   2017-07-05 12:32:20
+# @Date:   2017-07-05 16:55:00
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-07-05 16:47:27
-
-# 终于开始面向对象了嘛2333333
-
-# 类的首字母要大写
-class Dog():
-	"""docstring for Dog"""
-	def __init__(self, name, age):
-		self.name = name
-		self.age = age
-	
-	def sit(self):
-		print(self.name.title() + " is now sitting.")
-
-	def roll_over(self):
-		print(self.name.title() + " rolled over!")
-	
-my_dog = Dog('while', 6)
-
-print("My dog's name is " + my_dog.name.title() + ".")
-print("My dog's age is " + str(my_dog.age) + ".")
-
-# 调用方法
-my_dog.sit()
-my_dog.roll_over()
+# @Last Modified time: 2017-07-05 16:58:50
 
 # car类
 class Car(object):
@@ -56,30 +32,6 @@ class Car(object):
 		else:
 			print("You can't roll back an odometer!")
 
-my_new_car = Car('audi', 'a8', '2017')
-print(my_new_car.get_descriptive_name())
-my_new_car.read_odometer()
-		
-# 修改属性的值
-
-# 直接修改
-my_new_car.odometer_reading = 23
-my_new_car.read_odometer()
-
-# 通过方法修改属性的值
-my_new_car.update_odometer(20)
-my_new_car.read_odometer()
-
-# 通过方法对属性的值进行递增
-my_used_car = Car('subaru','outback','2013')
-print("my used car is " + my_used_car.make.title() + '.')
-
-my_used_car.update_odometer(23500)
-my_used_car.read_odometer()
-
-my_used_car.increment_odometer(100)
-my_used_car.read_odometer()
-
 class Battery():
 	def __init__(self, battery_size = 70):
 		self.battery_size = battery_size
@@ -106,10 +58,3 @@ class ElectricCar(Car):
 	# 重写父类的方法,调用时会覆盖父类中的同名方法
 	def fill_gas_tank():
 		print("This car doesn't need a gas tank!")
-
-my_tesla = ElectricCar('tesla', 'model s', '2016')
-print(my_tesla.get_descriptive_name())
-my_tesla.battery.describe_battery()
-my_tesla.battery.get_range()
-
-
