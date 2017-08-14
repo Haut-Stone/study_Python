@@ -2,7 +2,7 @@
 # @Author: Haut-Stone
 # @Date:   2016-12-30 13:24:14
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-01-10 11:19:48
+# @Last Modified time: 2017-08-09 17:48:05
 
 import  random , pygame, sys
 from pygame.locals import *
@@ -231,7 +231,7 @@ def startGameAnimation(board):#开始的提示动画
 	for x in range(BOARDWIDTH):
 		for y in range(BOARDHEIGHT):
 			boxes.append((x, y))
-	random. shuffle(boxes)#打乱元素
+	random.shuffle(boxes)#打乱元素
 	boxGroups = splitIntoGroupsOf(8, boxes)#		？？
 
 	drawBoard(board, coveredBoxes)

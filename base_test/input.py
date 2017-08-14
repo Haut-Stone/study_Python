@@ -2,10 +2,10 @@
 # @Author: Haut-Stone
 # @Date:   2017-07-04 21:33:50
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-07-04 22:31:23
+# @Last Modified time: 2017-07-15 11:21:48
 
 # 这里的因为有输入所以只能在命令行里面进行调试了
-message = input("Tell me something , and I will repeat it back to you: ")
+message = input('input user: ')
 print(message)
 
 # 处理输入的整数
