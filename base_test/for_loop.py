@@ -2,7 +2,7 @@
 # @Author: Haut-Stone
 # @Date:   2017-07-04 14:37:39
 # @Last Modified by:   Haut-Stone
-# @Last Modified time: 2017-07-04 14:54:25
+# @Last Modified time: 2018-01-23 18:25:45
 
 # 基本款
 magicians = ['alice','david','carolina']
